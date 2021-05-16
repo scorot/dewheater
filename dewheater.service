@@ -1,0 +1,16 @@
+[Unit]
+Description=Dew Heater for All Sky Camera
+After=multi-user.target
+
+[Service]
+User=pi
+ExecStart=/home/pi/allsky/dewheater/dewheater.py
+Environment=PYTHONUNBUFFERED=1
+StandardOutput=syslog
+StandardError=syslog
+SyslogFacility=local6
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
