@@ -15,7 +15,7 @@ import pyowm
 import json
 import logging
 import os
-
+import string
 
 
 class DewHeater(object):
@@ -209,6 +209,12 @@ class DewHeater(object):
             timeout = timeout - 5.0 
             time.sleep(5.0)
 
+    def summary(self, data_line):
+        """Write the data_line in a file
+        """
+        with open('/home/pi/allsky/dewheater/summary.txt', 'w') as f:
+            f.write(data_line)
+
     def main(self):
 
         #datalogger = os.path.join('/var', 'log', datalogger)
@@ -276,6 +282,20 @@ class DewHeater(object):
                                                                      dewpoint_ext,
                                                                      tdiff+0.5))
                         self.set_heater_off()
+
+                    self.summary('\n'.join(('Internal temp.: {}',
+                                            'Int. dew point: {:1.2f}',
+                                            'Int. Hr: {}%',
+                                            'Ext. temp.: {}',
+                                            'Ext. dew point: {:1.2f}',
+                                            'Ext Hr: {}%',
+                                            'Dewheater: {}')).format(temp_in,
+                                                             dewpoint_in,
+                                                             humidity_in,
+                                                             temp_ext,
+                                                             dewpoint_ext,
+                                                             humidity_ext,
+                                                             self.heater_status))
 
                     logging.info('{} {:1.2f} {} {} {:1.2f} {} {}'.format(temp_in,
                                                              dewpoint_in,

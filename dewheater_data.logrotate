@@ -1,7 +1,8 @@
 /var/log/dewheater_data.log
 {
-	rotate 4
-	weekly
+	rotate 12
+	monthly
+        size 3M
 	missingok
 	notifempty
 	compress
