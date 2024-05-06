@@ -31,9 +31,9 @@ chown root:root /etc/rsyslog.d/dewheater.conf
 chmod 0644 /etc/rsyslog.d/dewheater.conf
 echo -en '\n'
 
-echo -en "${GREEN}* Copy dewheater configuration file\n${NC}"
-cp settings_dewheater.json.repo settings_dewheater.json
-test -d /etc/raspap && cp  settings_dewheater.json /etc/raspap/
+#echo -en "${GREEN}* Copy dewheater configuration file\n${NC}"
+#cp settings_dewheater.json.repo settings_dewheater.json
+#test -d /etc/raspap && cp  settings_dewheater.json /etc/raspap/
 
 chown -R `logname`:`logname` dewheater.py
 systemctl daemon-reload
