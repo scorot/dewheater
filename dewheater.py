@@ -21,8 +21,8 @@ import string
 class DewHeater(object):
     """
     """
-    def __init__(self, allsky_conf_file, dewheater_conf_file):
-        self.allsky_conf_file =allsky_conf_file
+    def __init__(self, dewheater_conf_file):
+        self.allsky_conf_file = None
         self.dewheater_conf_file = dewheater_conf_file
         self.config = {}
         self.heater_status = False
@@ -36,47 +36,35 @@ class DewHeater(object):
         Returns a dictionnary with all the configuration
         parameters.
         """
-        allsky_conf_file = os.path.basename(self.allsky_conf_file)
-
-        if os.path.exists("/etc/raspap/" + allsky_conf_file):
-            print('/etc/raspap/')
-            if verbose:
-                print("Read {}".format("/etc/raspap/" + allsky_conf_file))
-            with open("/etc/raspap/" + allsky_conf_file, 'r') as fc:
-                j = json.load(fc)
-            self.allsky_conf_file = "/etc/raspap/" + allsky_conf_file
-        elif os.path.exists("/home/pi/allsky/" + allsky_conf_file):
-            print('/home/pi/allsky/')
-            if verbose:
-                print("Read {}".format("/home/pi/allsky/" + allsky_conf_file))
-            with open("/home/pi/allsky/" + allsky_conf_file, 'r') as fc:
-                j = json.load(fc)
-            self.allsky_conf_file = "/home/pi/allsky/" + allsky_conf_file
-        elif os.path.exists("/home/pi/allsky/config/" + allsky_conf_file):
-            print('/home/pi/allsky/config')
-            if verbose:
-                print("Read {}".format("/home/pi/allsky/config/" + allsky_conf_file))
-            with open("/home/pi/allsky/config/" + allsky_conf_file, 'r') as fc:
-                j = json.load(fc)
-            self.allsky_conf_file = "/home/pi/allsky/config/" + allsky_conf_file
-        else:
-            raise IOError(f"allsky config {allsky_conf_file} file not found")
 
         dewheater_conf_file = os.path.basename(self.dewheater_conf_file)
-        if os.path.exists("/etc/raspap/" + dewheater_conf_file):
-            if verbose:
-                print("Read {}".format("/etc/raspap/" + dewheater_conf_file))
-            with open("/etc/raspap/" + dewheater_conf_file, 'r') as fc:
-                j.update(json.load(fc))
-            self.dewheater_conf_file = "/etc/raspap/" + dewheater_conf_file
-        elif os.path.exists("/home/pi/allsky/dewheater/" + dewheater_conf_file):
+        if os.path.exists("/home/pi/allsky/dewheater/" + dewheater_conf_file):
             if verbose:
                 print("Read {}".format("/home/pi/allsky/dewheater/" + dewheater_conf_file))
             with open("/home/pi/allsky/dewheater/" + dewheater_conf_file, 'r') as fc:
-                j.update(json.load(fc))
+                 j = json.load(fc)
             self.dewheater_conf_file = "/home/pi/allsky/dewheater/" + dewheater_conf_file
         else:
-            raise IOError("dewheater config file not found")
+            raise IOError(" ".join(("dewheater config file not found. You must copy",
+                          "settings_dewheater.json.repo to settings_dewheater.json",
+                          "and change the settings according to your setup.")))
+
+        allsky_conf_file = j.get("allsky_config_file")
+        
+        if os.path.exists("/home/pi/allsky/dewheater/" + allsky_conf_file):
+            if verbose:
+                print("Read {}".format("/home/pi/allsky/dewheater/" + allsky_conf_file))
+            with open("/home/pi/allsky/dewheater/" + allsky_conf_file, 'r') as fc:
+                j.update(json.load(fc))
+            self.allsky_conf_file = "/home/pi/allsky/dewheater/" + allsky_conf_file
+        elif os.path.exists("/home/pi/allsky/config/" + allsky_conf_file):
+            if verbose:
+                print("Read {}".format("/home/pi/allsky/config/" + allsky_conf_file))
+            with open("/home/pi/allsky/config/" + allsky_conf_file, 'r') as fc:
+                j.update(json.load(fc))
+            self.allsky_conf_file = "/home/pi/allsky/config/" + allsky_conf_file
+        else:
+            raise IOError(f"allsky config {allsky_conf_file} file not found. Check your {dewheater_conf_file} file.")
 
         if verbose:
             print("Camera location is {} {}".format(j.get('latitude'),
@@ -340,8 +328,7 @@ class DewHeater(object):
 if __name__ == '__main__':
 
     # get the allsky configuration from /etc/raspap
-    dh = DewHeater('settings_RPi_HQ.json',
-                   'settings_dewheater.json',
+    dh = DewHeater('settings_dewheater.json',
                    )
 
     dh.get_config(verbose=1)

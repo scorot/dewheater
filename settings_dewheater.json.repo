@@ -1,8 +1,9 @@
 {
 	"owm_api_key" : "put_your_owm_key_here",
+	"allsky_settings_file" : "settings_location.json",
 	"relay_board_pin" : 17,
 	"dht22_board_pin" : 4,
 	"dew_temp_correction" : 8.0,
 	"loop_sleep_time" : 300,
-        "verbose_log" : 1
+    "verbose_log" : 1
 }
