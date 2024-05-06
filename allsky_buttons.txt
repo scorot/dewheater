@@ -1,0 +1,4 @@
+# Type  Message                         Command                         Color   FA icon Label
+button	Dewheater service turned on		sudo systemctl start dewheater	green	play	Turn dew heater service On
+button	Dewheater service turned off	sudo systemctl stop dewheater	red		stop	Turn dew heater service Off
+
