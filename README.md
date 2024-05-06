@@ -1,18 +1,22 @@
 # Introduction
 
-A dewheater service for my allsky camera. This tools is a made of a python script that opens or close a relay depending on the difference of humidity between the inside and the outside of the camera box.
-
-For this service to work, one need :
-- a relay board used to switch on and off the resistors,
-- a relative humidity sensors to get the internal temperature and,
-- an OpenWeatherMap api key to get the outdood temperature and humidity
+A dewheater service for my allsky camera. This tools is a made of a python script that automaticaly opens or closes a relay depending on the difference of the dewpoint temperature between the inside and the outside of the camera box. One can change the parameter that triggers the activation of the relay in a configuration file in json format.
 
 # Prerequisite
 
-This setup instructions assumes that your are using the allsky camera from [AllSkyTeam](https://github.com/AllskyTeam/allsky). Therefore you should have an allsky directory in the home directory of your pi.
-If not, you can simply create a directory named ``allsky`` and proceed to the installation instructions as detailled bellow.
+For this service to work, one need :
+- a relay board used to switch on and off the thermal resistors,
+- a relative humidity sensors to get the internal temperature and,
+- an OpenWeatherMap api key to get the outdood temperature and humidity
 
+For the relay board and internal temperature sensor, I use:
+- a relay board DFRobot bought on [thepihut.com](https://thepihut.com/products/gravity-relay-module-v3-1?variant=27740618897)
+- a DHT22 sensor from AZDelivery bought on [amazon](https://www.amazon.fr/gp/product/B07L4WCFPZ/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&th=1) which works fine with the adafruit library.
+
+Regading the thremal resistors, I simply uses 5 4.7ohms resistors connected in serial and powered from the 5V power pin (pin 2 or 4, see [pinout.xyz/](https://pinout.xyz/)) of the RasperryPi. This gives 1W of heat power which is enought, at least for my camera. Then the relay, turns on or off the resistors circuit.
 # Preparation
+This setup instructions assumes that your are using the allsky camera from [AllSkyTeam](https://github.com/AllskyTeam/allsky). Therefore you should have an allsky directory in the home directory of your pi. If not, you can simply create a directory named ``allsky`` and proceed to the installation instructions as detailled bellow.
+
 Move into the ``allsky`` directory and clone this github repository:
 
 ```shell
@@ -76,7 +80,7 @@ pi@allsky:~/allsky/dewheater $ sudo systemctl status dewheater
 mai 06 11:53:28 allsky python3[9685]: /home/pi/allsky/config
 mai 06 11:53:28 allsky python3[9685]: Read /home/pi/allsky/config/settings_RPi_HQ.json
 mai 06 11:53:28 allsky python3[9685]: Read /home/pi/allsky/dewheater/settings_dewheater.json
-mai 06 11:53:28 allsky python3[9685]: Camera location is 48.056N 7.42E
+mai 06 11:53:28 allsky python3[9685]: Camera location is 23.5N 15.0E
 mai 06 11:53:28 allsky python3[9685]: loop sleep time is 300s
 mai 06 11:53:28 allsky python3[9685]: Start relay test...
 mai 06 11:53:30 allsky python3[9685]: Test succeded.
@@ -85,9 +89,14 @@ mai 06 11:53:31 allsky python3[9685]: Internal temperature = 28.6 > 10.48 + 8.5
 mai 06 11:53:31 allsky python3[9685]: Sleep for 300 seconds...
 ```
 
+# Dewpoint adjustement
+Now that the service is running, one can adjust the setting *dew_temp_correction* in the ``settings_dewheater.json`` file. Increase the value if the dewheater is not triggered soon enought. Reduce the value if the dewheater is alway active.
+It is not needed to restart the service, any changes in the configuration file are detected and immediately applied.
+
 # Intergration with Allsky WebUI
 ## Image text overlay
-The dewheater service provides a text file in ``/home/pi/allsky/dewheater/summary.txt``which can be used as a text overlay in the images. To enable this, simply copy and paste  this path in the field *Extra Text File* in the *AllSky Settings* page.
+The dewheater service provides a text file in ``/home/pi/allsky/dewheater/summary.txt``which can be used as a text overlay in the images. The user will find use full informations such as the internal and external HR and temperature, but most importantly, if the heater is active or not.
+To enable the overlay text, simply copy and paste this path given above in the field *Extra Text File* in the *AllSky Settings* page.
 
 ## Start/Stop service in System page
 If you want to be able to stop and start the dewheater service from the System page in the WebUI, go to the Editor and set the ``WEBUI_DATA_FILES``variable to this:
