@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 User=pi
-ExecStart=/home/pi/allsky/dewheater/dewheater.py
+ExecStart=/home/pi/allsky/dewheater/venv/bin/python3 /home/pi/allsky/dewheater/dewheater.py
 Environment=PYTHONUNBUFFERED=1
 StandardOutput=syslog
 StandardError=syslog
