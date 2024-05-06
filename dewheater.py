@@ -39,19 +39,28 @@ class DewHeater(object):
         allsky_conf_file = os.path.basename(self.allsky_conf_file)
 
         if os.path.exists("/etc/raspap/" + allsky_conf_file):
+            print('/etc/raspap/')
             if verbose:
                 print("Read {}".format("/etc/raspap/" + allsky_conf_file))
             with open("/etc/raspap/" + allsky_conf_file, 'r') as fc:
                 j = json.load(fc)
             self.allsky_conf_file = "/etc/raspap/" + allsky_conf_file
         elif os.path.exists("/home/pi/allsky/" + allsky_conf_file):
+            print('/home/pi/allsky/')
             if verbose:
                 print("Read {}".format("/home/pi/allsky/" + allsky_conf_file))
             with open("/home/pi/allsky/" + allsky_conf_file, 'r') as fc:
                 j = json.load(fc)
             self.allsky_conf_file = "/home/pi/allsky/" + allsky_conf_file
+        elif os.path.exists("/home/pi/allsky/config/" + allsky_conf_file):
+            print('/home/pi/allsky/config')
+            if verbose:
+                print("Read {}".format("/home/pi/allsky/config/" + allsky_conf_file))
+            with open("/home/pi/allsky/config/" + allsky_conf_file, 'r') as fc:
+                j = json.load(fc)
+            self.allsky_conf_file = "/home/pi/allsky/config/" + allsky_conf_file
         else:
-            raise IOError("allsky config file not found")
+            raise IOError(f"allsky config {allsky_conf_file} file not found")
 
         dewheater_conf_file = os.path.basename(self.dewheater_conf_file)
         if os.path.exists("/etc/raspap/" + dewheater_conf_file):
@@ -218,7 +227,8 @@ class DewHeater(object):
     def main(self):
 
         #datalogger = os.path.join('/var', 'log', datalogger)
-        datalogger = '/var/log/dewheater_data.log'
+        #datalogger = '/var/log/dewheater_data.log'
+        datalogger = '/home/pi/allsky/tmp/dewheater_data.log'
         logging.basicConfig(filename=datalogger,
                     format='%(asctime)s %(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p',
@@ -313,7 +323,7 @@ class DewHeater(object):
                 except Exception as error:
                     dhtDevice.exit()
                     GPIO.cleanup()
-                    print("An error occured. Exiting...")
+                    print(f"An error occured with message: {error}.\nExiting...")
                     exit(1)
                     #raise Exception(str(error))
 
@@ -330,7 +340,7 @@ class DewHeater(object):
 if __name__ == '__main__':
 
     # get the allsky configuration from /etc/raspap
-    dh = DewHeater('settings_RPiHQ.json',
+    dh = DewHeater('settings_RPi_HQ.json',
                    'settings_dewheater.json',
                    )
 
